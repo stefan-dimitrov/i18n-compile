@@ -1,6 +1,6 @@
 {
   "name": "i18n-compile",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "NodeJS module for assembling JSON translation files from language-merged YAML input files.",
   "homepage": "https://github.com/stefan-dimitrov/i18n-compile",
   "repository": "git@github.com:stefan-dimitrov/i18n-compile.git",
@@ -21,9 +21,6 @@
     "json"
   ],
   "main": "index.js",
-  "engines": {
-    "node": ">= 0.8.0"
-  },
   "license": "MIT",
   "scripts": {
     "test": "mocha test/*.test.js"

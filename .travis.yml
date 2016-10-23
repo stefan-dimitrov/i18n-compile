@@ -6,3 +6,10 @@ install:
   - npm install
 
 script: npm test
+deploy:
+  provider: npm
+  email: "$EMAIL"
+  api_key: "$AUTH_TOKEN"
+  on:
+    tags: true
+    branch: master
