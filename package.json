@@ -20,6 +20,7 @@
     "yaml",
     "json"
   ],
+  "bin": "bin/i18n-compile",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -31,6 +32,7 @@
     "mocha": "^3.1.0"
   },
   "dependencies": {
+    "commander": "^2.9.0",
     "fs-extra": "^0.30.0",
     "glob": "^7.1.1",
     "js-yaml": ">=3.4",
