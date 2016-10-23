@@ -1,4 +1,4 @@
-# i18n-compile [![Build Status](https://travis-ci.org/stefan-dimitrov/i18n-yaml-compile.svg?branch=master)](https://travis-ci.org/stefan-dimitrov/i18n-yaml-compile)
+# i18n-compile [![Build Status](https://travis-ci.org/stefan-dimitrov/i18n-compile.svg?branch=master)](https://travis-ci.org/stefan-dimitrov/i18n-compile)
 
 NodeJS module for assembling JSON translation files from language-merged YAML input files.
 

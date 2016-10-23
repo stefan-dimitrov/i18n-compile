@@ -20,7 +20,6 @@ module.exports = function (filePatterns, destination, options) {
   });
 
   var files = _.uniq(_.flatten(matchedFiles));
-  console.log('files:', files);
 
   var srcList = files.filter(function (filepath) {
     // Warn on and remove invalid source files (if nonull was set).
