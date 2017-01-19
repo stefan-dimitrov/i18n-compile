@@ -14,6 +14,66 @@ describe('i18n-compile', function () {
   var compiled_pt = 'file_per_lang/translations_pt.json';
   var compiled_es = 'file_per_lang/translations_es.json';
 
+  describe('from string', function () {
+    function openFixtures(fileNames) {
+      var argsArray = Array.prototype.slice.apply(arguments);
+      return argsArray.map(function (each) {
+        return fse.readFileSync('test/fixtures/' + each, 'utf8');
+      }).join('\n\n');
+    }
+
+    it('compile', function () {
+      var result = i18n_compile.fromString(openFixtures('menu_i18n.yaml', 'country_i18n.yaml'));
+
+      var expected_en = readExpected(compiled_en);
+      var expected_pt = readExpected(compiled_pt);
+      var expected_es = readExpected(compiled_es);
+
+      expect(JSON.stringify(result.en)).to.equal(expected_en);
+      expect(JSON.stringify(result.pt)).to.equal(expected_pt);
+      expect(JSON.stringify(result.es)).to.equal(expected_es);
+    });
+
+    it('list values', function () {
+      var result = i18n_compile.fromString(openFixtures('templates_i18n.yaml'));
+
+      var expected = readExpected('templates_merged.json');
+
+      expect(JSON.stringify(result)).to.equal(expected);
+    });
+
+    it('sibling values and children', function (done) {
+      try {
+        i18n_compile.fromString(openFixtures('sibling_values_and_children_i18n.yaml'), 'sibling_values_and_children_i18n.yaml');
+        done('should throw error');
+      } catch (e) {
+        expect(e).to.match(/Error: Bad hierarchy format in "sibling_values_and_children_i18n[.]yaml"/i);
+      }
+      done();
+    });
+
+    it('bad indentation', function (done) {
+      try {
+        i18n_compile.fromString(openFixtures('bad_indentation_i18n.yaml'), 'bad_indentation_i18n.yaml');
+        done('should throw error');
+      } catch (e) {
+        expect(e.toString()).to.match(/YAMLException: bad indentation[\w\s]+?in "bad_indentation_i18n[.]yaml/i);
+      }
+      done();
+    });
+
+    it('error without filename string', function (done) {
+      try {
+        i18n_compile.fromString(openFixtures('sibling_values_and_children_i18n.yaml'));
+        done('should throw error');
+      } catch (e) {
+        expect(e).to.match(/Error: Bad hierarchy format at BUTTON_SHOW_ALL/i);
+      }
+      done();
+    });
+
+  });
+
   it('compile with default options', function () {
     i18n_compile(getFixtures('menu_i18n.yaml', 'country_i18n.yaml'), 'tmp/file_per_lang/translations_.json');
 
