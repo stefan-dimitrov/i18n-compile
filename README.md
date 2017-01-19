@@ -11,11 +11,33 @@ Installation:
 npm install i18n-compile --save-dev
 ```
 
+Usage as a CLI executable:
+
+```sh
+Usage: i18n-compile [options] <files...>
+
+  Options:
+
+    -h, --help                output usage information
+    -o, --out <dest>          Output file path. May contain language placement token (--lang-place)
+    -m, --merge               Whether to merge all languages into a single file
+    -l, --lang-place [token]  Placeholder for the language name in the output file path. Only applicable if the --merge option is not used
+
+```
+
+
 Usage as a node module:
 ```js
-var i18n_compile = require('i18n-compile');
+var i18nCompile = require('i18n-compile');
 
-i18n_compile(['src/file-1.yaml', 'src/**/*_i18n.yaml'], 'destination/path/translation_[lang].json', {langPlace: '[lang]'});
+i18nCompile(['src/file-1.yaml', 'src/**/*_i18n.yaml'], 'destination/path/translation_[lang].json', {langPlace: '[lang]'});
+
+// or from a string
+
+var yamlString = ... // yaml as a string
+
+var translations = i18nCompile.fromString(yamlString, 'src/file-1.yaml');
+// translations => {lang1: {...}, lang2: {...}, ...}
 ```
 
 ## The translation format
@@ -127,9 +149,9 @@ Compiling the above example will result in the following output files:
 ### Arguments
 
 ```
-var i18n_compile = require('i18n-compile');
+var i18nCompile = require('i18n-compile');
 
-i18n_compile(<file-patterns>, <destination>, [<options>]);
+i18nCompile(<file-patterns>, <destination>, [<options>]);
 ```
 
 - #### File patterns
@@ -175,7 +197,7 @@ i18n_compile(<file-patterns>, <destination>, [<options>]);
 In this example, the compiled translations for each language are written to a separate file
 
 ```js
-i18n_compile(['src/**/*.yaml'], 'dest/translations-.json');
+i18nCompile(['src/**/*.yaml'], 'dest/translations-.json');
 ```
 The language id is by default inserted right before the last `.` of the file name. <br>
 So if we have the languages `en` and `bg`, the resulting files will be:
@@ -186,7 +208,7 @@ dest/translations-bg.json
 
 If there is no `.` present then the language id is inserted at the end of the file name:
 ```js
-i18n_compile(['src/**/*.yaml'], 'dest/translations-');
+i18nCompile(['src/**/*.yaml'], 'dest/translations-');
 ```
 ```
 dest/translations-en
@@ -197,7 +219,7 @@ dest/translations-bg
 In this example, the language id is placed at a custom location in the output file path
 
 ```js
-i18n_compile(['src/**/*.yaml'], 'dest/path/<lang>-translations.json', {langPlace: '<lang>'});
+i18nCompile(['src/**/*.yaml'], 'dest/path/<lang>-translations.json', {langPlace: '<lang>'});
 ```
 
 So if we have the languages `en` and `bg`, the resulting files will be
@@ -210,8 +232,33 @@ dest/path/bg-translations.json
 With `merge` set to `true` the compiled translations for all languages are merged into a single file
 
 ```js
-i18n_compile(['src/**/*.yaml'], 'dest/translations.json', {merge: true});
+i18nCompile(['src/**/*.yaml'], 'dest/translations.json', {merge: true});
 ```
+
+## Using the `fromString` method
+
+### Arguments
+
+```
+var i18nCompile = require('i18n-compile');
+
+var translations = i18nCompile.fromString(<input>, [<filename>]);
+```
+
+- #### input
+  Type: `String`
+  
+  `yaml` content as string.
+
+- #### filename
+  Type: `String`
+  
+  File path to use when displaying errors.
+
+### Return value
+
+A javascript object mapping each language name to the translations object for that language.
+
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality.

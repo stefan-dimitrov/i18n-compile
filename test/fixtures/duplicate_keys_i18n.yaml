@@ -1,0 +1,14 @@
+PAGES:
+  COMMENTS:
+    en: Comments
+    bg: Коментари
+  BUTTON_SHOW_ALL:
+    en: All comments
+    bg: Всички коментари
+  COMMENTS:
+    en: 'Comments:'
+    bg: 'Коментари:'
+
+  PROFILE:
+    en: Profile
+    bg: Профил

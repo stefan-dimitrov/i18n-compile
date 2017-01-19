@@ -8,11 +8,11 @@ var yaml = require('js-yaml');
 /**
  * Compile files to json.
  *
- * @param {String[]} files - files to compile
+ * @param {String[]} filePatterns - files to compile. Glob patterns can be used to match many files
  * @param {String} destination - where to write the compiled results
  * @param {*} [options] - compiling options
  */
-module.exports = function (filePatterns, destination, options) {
+var i18nCompile = function (filePatterns, destination, options) {
 
   options = options || {};
   var matchedFiles = _.map(filePatterns, function (pattern) {
@@ -37,17 +37,14 @@ module.exports = function (filePatterns, destination, options) {
       schema: yaml.JSON_SCHEMA
     });
 
-    return {
-      filePath: filepath,
-      content: content
-    };
+    return new SrcItem(filepath, content);
   });
 
   var compiled = compileTranslations(srcList);
 
   // Handle options.
   if (options.merge) {
-    // Write the (single) destination file.
+    // Write the destination file(with all languages merged in the same file).
     fse.outputFileSync(destination, JSON.stringify(compiled));
 
     // Print a success message.
@@ -66,6 +63,28 @@ module.exports = function (filePatterns, destination, options) {
   }
 };
 
+/**
+ * Compile yaml string to javascript object.
+ *
+ * @param {String} input - yaml string to compile.
+ * @param {String} [filename] - string to be used as a file path in error/warning messages.
+ * @returns {{}} - object containing the translations for each language.
+ */
+i18nCompile.fromString = function (input, filename) {
+  // Read YAML file.
+  var content = yaml.safeLoad(input, {
+    filename: filename,
+    schema: yaml.JSON_SCHEMA
+  });
+
+  return compileTranslations([new SrcItem(filename, content)]);
+};
+
+function SrcItem(filePath, content) {
+  this.filePath = filePath;
+  this.content = content;
+}
+
 function compileTranslations(srcList) {
   var compiled = {};
 
@@ -77,7 +96,11 @@ function compileTranslations(srcList) {
       var tempResult = recurseObject(rawScr.content);
       result = result.concat(tempResult);
     } catch (e) {
-      throw new Error(e.message + ' in "' + rawScr.filePath + '" at ' + e.atProperty);
+      var errorLocation = ['at', e.atProperty];
+      if (rawScr.filePath) {
+        errorLocation.unshift('in', '"' + rawScr.filePath + '"');
+      }
+      throw new Error([e.message].concat(errorLocation).join(' '));
     }
   }
 
@@ -144,3 +167,5 @@ function langFileDest(destination, lang, langPlace) {
 
   return parts[0] + lang;
 }
+
+module.exports = i18nCompile;
