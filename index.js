@@ -1,6 +1,5 @@
 'use strict';
 
-var fse = require('fs-extra');
 var glob = require('glob');
 var _ = require('lodash');
 var yaml = require('js-yaml');
@@ -13,6 +12,12 @@ var yaml = require('js-yaml');
  * @param {*} [options] - compiling options
  */
 var i18nCompile = function (filePatterns, destination, options) {
+  try {
+    var fse = require('fs-extra')
+  } catch (e) {
+    console.error('This method can only be used in server applications.\n' +
+      'Consider using the alternative method "i18nCompile.fromString()" instead.')
+  }
 
   options = options || {};
   var matchedFiles = _.map(filePatterns, function (pattern) {
